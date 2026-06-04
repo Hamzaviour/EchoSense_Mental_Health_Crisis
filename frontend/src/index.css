@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 200 33% 98%;
+    --foreground: 215 25% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 18%;
+    --primary: 173 58% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 199 89% 96%;
+    --secondary-foreground: 199 80% 28%;
+    --muted: 210 30% 96%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 45% 42%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 25% 90%;
+    --input: 214 25% 90%;
+    --ring: 173 58% 39%;
+    --radius: 0.75rem;
+  }
+
+  .crisis-mode {
+    --background: 215 28% 14%;
+    --foreground: 210 30% 94%;
+    --card: 215 25% 18%;
+    --card-foreground: 210 30% 94%;
+    --muted: 215 20% 22%;
+    --muted-foreground: 215 15% 70%;
+    --border: 215 20% 26%;
+  }
+
+  .dark {
+    --background: 222 28% 9%;
+    --foreground: 210 25% 96%;
+    --card: 222 24% 12%;
+    --card-foreground: 210 25% 96%;
+    --primary: 173 58% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 25% 18%;
+    --secondary-foreground: 210 25% 90%;
+    --muted: 215 20% 16%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 199 70% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 215 20% 20%;
+    --input: 215 20% 20%;
+    --ring: 173 58% 42%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-sm border border-border/60 shadow-sm;
+  }
+
+  .mask-fade-edges {
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+}

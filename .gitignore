@@ -1,0 +1,41 @@
+# Environment
+.env
+.env.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Data & models
+chroma_data/
+*.db
+backend/data/
+models_cache/
+.huggingface/
+
+# Logs & reports
+*.log
+reports/
+uploads/
+
+# OS
+.DS_Store
+Thumbs.db
