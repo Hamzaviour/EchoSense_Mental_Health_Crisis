@@ -5,6 +5,8 @@ export const LANGUAGE_STORAGE_KEY = 'echo_language'
 type TranslationTree = {
   nav: {
     chat: string
+    journal: string
+    sessionRequest: string
     therapyPlan: string
     copingTools: string
     logout: string
@@ -71,6 +73,60 @@ type TranslationTree = {
     anxietyDesc: string
     mindfulnessDesc: string
   }
+  journal: {
+    title: string
+    subtitle: string
+    writeTitle: string
+    writeDesc: string
+    placeholder: string
+    saveReflection: string
+    voiceLabel: string
+    voiceBadge: string
+    textBadge: string
+    pastEntries: string
+    noEntries: string
+    aiInsights: string
+    aiInsightsDesc: string
+    summary: string
+    emotions: string
+    copingStrategies: string
+    fullEntry: string
+    selectOrSave: string
+    loadError: string
+    saveError: string
+    voiceError: string
+    minLength: string
+    consentRequired: string
+    exportPdf: string
+    exportEntryPdf: string
+    exportError: string
+  }
+  sessionRequest: {
+    title: string
+    subtitle: string
+    formTitle: string
+    formDesc: string
+    chooseCounselor: string
+    anyCounselor: string
+    offDuty: string
+    requestType: string
+    chatSession: string
+    chatDesc: string
+    callback: string
+    callbackDesc: string
+    contact: string
+    contactPlaceholder: string
+    messageOptional: string
+    messagePlaceholder: string
+    submit: string
+    submitting: string
+    success: string
+    submitError: string
+    loadError: string
+    history: string
+    noRequests: string
+    counselor: string
+  }
   common: {
     loading: string
     start: string
@@ -88,6 +144,8 @@ export const translations: Record<Language, TranslationTree> = {
   en: {
     nav: {
       chat: 'Chat',
+      journal: 'Journal',
+      sessionRequest: 'Request Session',
       therapyPlan: 'Therapy Plan',
       copingTools: 'Coping Tools',
       logout: 'Logout',
@@ -154,6 +212,60 @@ export const translations: Record<Language, TranslationTree> = {
       anxietyDesc: 'Step-by-step calming sequence',
       mindfulnessDesc: 'Guided session with voice option',
     },
+    journal: {
+      title: 'AI Journal',
+      subtitle: 'Write or record your thoughts. AI reflects back with summary, emotions, and coping ideas.',
+      writeTitle: 'New reflection',
+      writeDesc: 'Your entries are private and stored securely.',
+      placeholder: 'What is on your mind today? Challenges, wins, worries, gratitude...',
+      saveReflection: 'Save & analyze',
+      voiceLabel: 'Voice diary',
+      voiceBadge: 'Voice',
+      textBadge: 'Written',
+      pastEntries: 'Past reflections',
+      noEntries: 'No entries yet. Start writing above.',
+      aiInsights: 'AI insights',
+      aiInsightsDesc: 'Summary and gentle suggestions based on your reflection',
+      summary: 'Summary',
+      emotions: 'Detected emotions',
+      copingStrategies: 'Suggested coping strategies',
+      fullEntry: 'Your entry',
+      selectOrSave: 'Save a reflection or select one from the list to see AI insights.',
+      loadError: 'Could not load journal entries.',
+      saveError: 'Could not save your reflection.',
+      voiceError: 'Voice diary failed. Check microphone and try again.',
+      minLength: 'Please write at least a few words.',
+      consentRequired: 'Please complete consent on the Chat page before using the journal.',
+      exportPdf: 'Export All (PDF)',
+      exportEntryPdf: 'Export Entry (PDF)',
+      exportError: 'Could not export journal PDF.',
+    },
+    sessionRequest: {
+      title: 'Request Counselor Session',
+      subtitle: 'Choose a counselor and request a live chat or phone callback.',
+      formTitle: 'New request',
+      formDesc: 'A counselor will review your request and respond when available.',
+      chooseCounselor: 'Preferred counselor',
+      anyCounselor: 'Any available counselor',
+      offDuty: 'off duty',
+      requestType: 'Session type',
+      chatSession: 'Chat session',
+      chatDesc: 'Live text chat with a licensed counselor',
+      callback: 'Request callback',
+      callbackDesc: 'Counselor calls you at your preferred number',
+      contact: 'Phone or contact (optional)',
+      contactPlaceholder: 'e.g. 03XX-XXXXXXX',
+      messageOptional: 'Note for counselor (optional)',
+      messagePlaceholder: 'Best times to reach you, what you would like to discuss...',
+      submit: 'Submit request',
+      submitting: 'Submitting...',
+      success: 'Your request was sent. A counselor will respond soon.',
+      submitError: 'Could not submit request. Try again.',
+      loadError: 'Could not load counselors or requests.',
+      history: 'Your requests',
+      noRequests: 'No requests yet.',
+      counselor: 'Counselor',
+    },
     common: {
       loading: 'Loading...',
       start: 'Start',
@@ -182,6 +294,8 @@ export const translations: Record<Language, TranslationTree> = {
   ur: {
     nav: {
       chat: 'Chat',
+      journal: 'Journal',
+      sessionRequest: 'Session Request',
       therapyPlan: 'Therapy Plan',
       copingTools: 'Coping Tools',
       logout: 'Logout',
@@ -247,6 +361,60 @@ export const translations: Record<Language, TranslationTree> = {
       sleepDesc: 'Wind-down tips aur timer',
       anxietyDesc: 'Step-by-step calming sequence',
       mindfulnessDesc: 'Guided session voice option ke saath',
+    },
+    journal: {
+      title: 'AI Journal',
+      subtitle: 'Apne khayalat likhein ya record karein. AI summary, emotions aur coping ideas deta hai.',
+      writeTitle: 'Nayi reflection',
+      writeDesc: 'Aap ki entries private aur mehfooz hain.',
+      placeholder: 'Aaj aap ke dil mein kya hai? Challenges, wins, worries, shukriya...',
+      saveReflection: 'Save & analyze',
+      voiceLabel: 'Voice diary',
+      voiceBadge: 'Voice',
+      textBadge: 'Written',
+      pastEntries: 'Purani reflections',
+      noEntries: 'Abhi koi entry nahi. Upar likhna shuru karein.',
+      aiInsights: 'AI insights',
+      aiInsightsDesc: 'Aap ki reflection par summary aur gentle suggestions',
+      summary: 'Summary',
+      emotions: 'Detected emotions',
+      copingStrategies: 'Suggested coping strategies',
+      fullEntry: 'Aap ki entry',
+      selectOrSave: 'Reflection save karein ya list se select karein AI insights ke liye.',
+      loadError: 'Journal entries load nahi ho sakin.',
+      saveError: 'Reflection save nahi ho saki.',
+      voiceError: 'Voice diary fail. Microphone check karein.',
+      minLength: 'Kuch alfaaz likhein (kam az kam thori si reflection).',
+      consentRequired: 'Journal se pehle Chat page par consent complete karein.',
+      exportPdf: 'Sab Export (PDF)',
+      exportEntryPdf: 'Entry Export (PDF)',
+      exportError: 'Journal PDF export nahi ho saka.',
+    },
+    sessionRequest: {
+      title: 'Counselor Session Request',
+      subtitle: 'Counselor choose karein aur live chat ya phone callback request karein.',
+      formTitle: 'Nayi request',
+      formDesc: 'Counselor aap ki request review karega jab available ho.',
+      chooseCounselor: 'Preferred counselor',
+      anyCounselor: 'Koi bhi available counselor',
+      offDuty: 'off duty',
+      requestType: 'Session type',
+      chatSession: 'Chat session',
+      chatDesc: 'Licensed counselor ke saath live text chat',
+      callback: 'Callback request',
+      callbackDesc: 'Counselor aap ko call karega',
+      contact: 'Phone / contact (optional)',
+      contactPlaceholder: 'jaise 03XX-XXXXXXX',
+      messageOptional: 'Counselor ke liye note (optional)',
+      messagePlaceholder: 'Best time, kya discuss karna chahte hain...',
+      submit: 'Request bhejein',
+      submitting: 'Bhej rahe hain...',
+      success: 'Request bhej di gayi. Counselor jald respond karega.',
+      submitError: 'Request submit nahi ho saki.',
+      loadError: 'Counselors ya requests load nahi ho sakin.',
+      history: 'Aap ki requests',
+      noRequests: 'Abhi koi request nahi.',
+      counselor: 'Counselor',
     },
     common: {
       loading: 'Loading...',

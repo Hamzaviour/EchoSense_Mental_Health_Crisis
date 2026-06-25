@@ -95,3 +95,24 @@ def notify_counselor_mentioned(patient: Patient, detail: str = "") -> None:
         notification_type="COUNSELOR_MENTIONED",
         patient_id=patient.id,
     )
+
+
+def notify_session_request(patient: Patient, request_type: str, counselor_id: int | None = None) -> None:
+    type_label = "callback" if request_type == "CALLBACK" else "chat session"
+    msg = f"{patient.full_name} ({patient.patient_id}) requested a {type_label}."
+    if counselor_id:
+        create_counselor_notification(
+            title="Session Request",
+            message=msg,
+            notification_type="SESSION_REQUEST",
+            patient_id=patient.id,
+            counselor_id=counselor_id,
+            broadcast=True,
+        )
+    else:
+        notify_all_counselors(
+            title="Session Request",
+            message=msg,
+            notification_type="SESSION_REQUEST",
+            patient_id=patient.id,
+        )

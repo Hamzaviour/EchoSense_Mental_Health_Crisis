@@ -266,3 +266,48 @@ def get_session_state(session: AssessmentSession) -> dict:
         "current_question": current_q,
         "is_complete": session.status == SessionStatus.COMPLETED,
     }
+
+
+def assessment_completion_summary(patient_id: int, types: list[str]) -> dict:
+    """Build patient-friendly completion summary for chat acknowledgement."""
+    summary_lines: list[str] = []
+    scores: dict = {}
+
+    if "PHQ9" in types:
+        phq = (
+            Phq9Result.query.filter_by(patient_id=patient_id)
+            .order_by(Phq9Result.created_at.desc())
+            .first()
+        )
+        if phq:
+            scores["phq9"] = {"score": phq.total_score, "severity": phq.severity}
+            summary_lines.append(f"PHQ-9: {phq.total_score}/27 ({phq.severity})")
+
+    if "GAD7" in types:
+        gad = (
+            Gad7Result.query.filter_by(patient_id=patient_id)
+            .order_by(Gad7Result.created_at.desc())
+            .first()
+        )
+        if gad:
+            scores["gad7"] = {"score": gad.total_score, "severity": gad.severity}
+            summary_lines.append(f"GAD-7: {gad.total_score}/21 ({gad.severity})")
+
+    if "WHO5" in types:
+        who5 = (
+            Who5Result.query.filter_by(patient_id=patient_id)
+            .order_by(Who5Result.created_at.desc())
+            .first()
+        )
+        if who5:
+            scores["who5"] = {"index": who5.wellbeing_index, "severity": who5.severity}
+            summary_lines.append(f"WHO-5 wellbeing: {who5.wellbeing_index:.0f}/100 ({who5.severity})")
+
+    text = (
+        "Thank you for completing the assessment. "
+        + ("Here is a summary of your responses: " + "; ".join(summary_lines) + "."
+           if summary_lines
+           else "Your responses were saved successfully.")
+        + " I’ll keep this in mind to support you better in chat."
+    )
+    return {"text": text, "scores": scores}

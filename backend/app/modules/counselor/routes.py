@@ -17,6 +17,8 @@ from app.models import (
     Phq9Result,
     RiskAnalysis,
     SentimentAnalysis,
+    SessionRequest,
+    SessionRequestStatus,
     User,
     Who5Result,
 )
@@ -492,6 +494,30 @@ def update_clinical_notes(patient_db_id: int):
     return jsonify({"counselor_notes": rec.counselor_notes})
 
 
+@counselor_bp.post("/patients/<int:patient_db_id>/assessment-report/pdf")
+@jwt_required()
+@role_required("COUNSELOR", "ADMIN")
+def download_assessment_report_pdf(patient_db_id: int):
+    from app.services.report_service import build_assessment_report_data, generate_assessment_report_pdf
+
+    p = Patient.query.get_or_404(patient_db_id)
+    data = build_assessment_report_data(p)
+    if not any(data.get(k) for k in ("phq9", "gad7", "who5")):
+        return jsonify({"error": "No assessment results available for this patient"}), 404
+    try:
+        filepath = generate_assessment_report_pdf(p, data)
+    except Exception as e:
+        return jsonify({"error": str(e)[:300]}), 500
+    if not filepath or not os.path.isfile(filepath):
+        return jsonify({"error": "PDF generation failed"}), 500
+    return send_file(
+        filepath,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=f"assessment_{p.patient_id}.pdf",
+    )
+
+
 @counselor_bp.post("/patients/<int:patient_db_id>/clinical-report/pdf")
 @jwt_required()
 @role_required("COUNSELOR", "ADMIN")
@@ -577,3 +603,68 @@ def escalate_to_helpline(escalation_id: int):
     except Exception as e:
         return jsonify({"error": str(e)[:200]}), 500
     return jsonify(result)
+
+
+def _counselor_session_request_dict(req: SessionRequest) -> dict:
+    return {
+        "id": req.id,
+        "patient_id": req.patient_id,
+        "patient_name": req.patient.full_name if req.patient else None,
+        "patient_code": req.patient.patient_id if req.patient else None,
+        "request_type": req.request_type.value if req.request_type else None,
+        "status": req.status.value if req.status else None,
+        "message": req.message,
+        "preferred_contact": req.preferred_contact,
+        "counselor_id": req.counselor_id,
+        "counselor_name": req.counselor.full_name if req.counselor else None,
+        "created_at": req.created_at.isoformat() if req.created_at else None,
+    }
+
+
+@counselor_bp.get("/session-requests")
+@jwt_required()
+@role_required("COUNSELOR", "ADMIN")
+def list_counselor_session_requests():
+    counselor = _counselor()
+    status = request.args.get("status", "PENDING")
+    q = SessionRequest.query
+    if status:
+        try:
+            q = q.filter_by(status=SessionRequestStatus[status.upper()])
+        except KeyError:
+            pass
+    if counselor:
+        q = q.filter(
+            db.or_(
+                SessionRequest.counselor_id.is_(None),
+                SessionRequest.counselor_id == counselor.id,
+            )
+        )
+    reqs = q.order_by(SessionRequest.created_at.desc()).limit(100).all()
+    return jsonify({"requests": [_counselor_session_request_dict(r) for r in reqs]})
+
+
+@counselor_bp.patch("/session-requests/<int:request_id>")
+@jwt_required()
+@role_required("COUNSELOR", "ADMIN")
+def update_session_request(request_id: int):
+    req = SessionRequest.query.get_or_404(request_id)
+    counselor = _counselor()
+    if req.counselor_id and counselor and req.counselor_id != counselor.id:
+        return jsonify({"error": "This request is assigned to another counselor"}), 403
+    data = request.get_json() or {}
+    new_status = (data.get("status") or "").upper()
+    if new_status not in ("APPROVED", "DECLINED", "COMPLETED", "PENDING"):
+        return jsonify({"error": "Invalid status"}), 400
+    req.status = SessionRequestStatus[new_status]
+    if counselor and not req.counselor_id:
+        req.counselor_id = counselor.id
+    if data.get("counselor_notes"):
+        req.counselor_notes = (data.get("counselor_notes") or "").strip()
+    if new_status == "APPROVED" and req.request_type.value == "CHAT_SESSION":
+        patient = req.patient
+        if patient and counselor:
+            patient.assigned_counselor_id = counselor.id
+    req.updated_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({"request": _counselor_session_request_dict(req)})

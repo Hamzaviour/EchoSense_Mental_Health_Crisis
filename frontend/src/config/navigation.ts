@@ -1,6 +1,8 @@
 import type { LucideIcon } from 'lucide-react'
 import {
   BarChart3,
+  BookOpen,
+  CalendarClock,
   FileText,
   Heart,
   LayoutDashboard,
@@ -21,6 +23,8 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   { to: '/chat', label: 'Chat', icon: MessageCircle, roles: ['PATIENT'] },
+  { to: '/journal', label: 'Journal', icon: BookOpen, roles: ['PATIENT'] },
+  { to: '/session-request', label: 'Request Session', icon: CalendarClock, roles: ['PATIENT'] },
   { to: '/therapy-plan', label: 'Therapy Plan', icon: Sparkles, roles: ['PATIENT'] },
   { to: '/coping-tools', label: 'Coping Tools', icon: Leaf, roles: ['PATIENT'] },
   { to: '/counselor/triage', label: 'Live Triage', icon: LayoutDashboard, roles: ['COUNSELOR', 'ADMIN'] },

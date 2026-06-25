@@ -10,12 +10,15 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        "postgresql://echosense:echosense@localhost:5432/echosense",
+        "sqlite:///echosense.db"
+        if os.getenv("HF_SPACE")
+        else "postgresql://echosense:echosense@localhost:5432/echosense",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CHROMA_HOST = os.getenv("CHROMA_HOST", "localhost")
     CHROMA_PORT = int(os.getenv("CHROMA_PORT", "8000"))
+    CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "")
     CHROMA_COLLECTION = os.getenv("CHROMA_COLLECTION", "mental_health_knowledge")
     CHROMA_PATIENT_MEMORY_COLLECTION = os.getenv(
         "CHROMA_PATIENT_MEMORY_COLLECTION", "patient_session_memory"

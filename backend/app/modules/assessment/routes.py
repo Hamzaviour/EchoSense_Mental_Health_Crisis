@@ -114,18 +114,60 @@ def auto_save_answer(session_id: int):
     state = save_answer(session, int(question_id), int(value))
     db.session.commit()
 
-    from app.services.assessment_session_service import get_assessment_context_for_rag
+    from app.services.assessment_session_service import (
+        assessment_completion_summary,
+        get_assessment_context_for_rag,
+    )
 
-    broadcast_patient_update(patient.id, {
-        "event": "assessment_progress",
-        "session": state,
-        "assessment_context": get_assessment_context_for_rag(patient.id),
-        "patient_id": patient.id,
-        "patient_name": patient.full_name,
-        "risk_score": patient.latest_risk_score,
-        "risk_level": patient.latest_risk_level,
-    })
-    return jsonify({"session": state})
+    completion = None
+    if state.get("is_complete"):
+        completion = assessment_completion_summary(
+            patient.id, state.get("assessment_types") or []
+        )
+
+    broadcast_patient_update(
+        patient.id,
+        {
+            "event": "assessment_progress",
+            "session": state,
+            "assessment_context": get_assessment_context_for_rag(patient.id),
+            "patient_id": patient.id,
+            "patient_name": patient.full_name,
+            "risk_score": patient.latest_risk_score,
+            "risk_level": patient.latest_risk_level,
+        },
+    )
+    return jsonify({"session": state, "summary": completion})
+
+
+@assessment_bp.post("/sessions/self-start")
+@jwt_required()
+def self_start_session():
+    """Patient-initiated assessment from sidebar (no chat prompt required)."""
+    patient = _patient()
+    if not patient:
+        return jsonify({"error": "Not found"}), 404
+
+    data = request.get_json() or {}
+    types = data.get("types") or ["PHQ9", "GAD7", "WHO5"]
+    types = [t.upper() for t in types if t.upper() in ("PHQ9", "GAD7", "WHO5")]
+    if not types:
+        return jsonify({"error": "No valid assessment types provided"}), 400
+
+    from app.services.assessment_session_service import (
+        accept_session,
+        create_offered_session,
+        get_session_state,
+    )
+
+    session = create_offered_session(patient.id, types)
+    accept_session(session)
+    db.session.commit()
+    broadcast_patient_update(
+        patient.id,
+        {"event": "assessment_started", "session": get_session_state(session)},
+    )
+    return jsonify({"session": get_session_state(session)})
 
 
 @assessment_bp.get("/<assessment_type>")

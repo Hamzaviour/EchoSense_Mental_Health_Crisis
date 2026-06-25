@@ -17,6 +17,13 @@ def register():
     if not all(data.get(f) for f in required):
         return jsonify({"error": "Missing required fields"}), 400
 
+    phone = (data.get("phone") or "").strip()
+    phone_digits = "".join(c for c in phone if c.isdigit())
+    if len(phone_digits) < 10:
+        return jsonify({"error": "Invalid phone number"}), 400
+    if not phone.startswith("+"):
+        phone = f"+{phone_digits}" if phone_digits else phone
+
     if User.query.filter_by(email=data["email"].lower()).first():
         return jsonify({"error": "Email already registered"}), 409
 
@@ -32,7 +39,7 @@ def register():
         user_id=user.id,
         patient_id=generate_patient_id(),
         full_name=data["full_name"],
-        phone=data["phone"],
+        phone=phone,
         age=int(data["age"]),
         gender=data["gender"],
     )
@@ -95,14 +102,22 @@ def refresh():
 
 
 @auth_bp.post("/register-counselor")
-@limiter.limit("5 per hour")
+@limiter.limit("10 per hour")
 def register_counselor():
-    """Bootstrap endpoint for demo — create counselor accounts."""
     data = request.get_json() or {}
     if not all(data.get(f) for f in ["full_name", "email", "password"]):
-        return jsonify({"error": "Missing fields"}), 400
+        return jsonify({"error": "Missing required fields"}), 400
+
+    phone = (data.get("phone") or "").strip() or None
+    if phone:
+        phone_digits = "".join(c for c in phone if c.isdigit())
+        if len(phone_digits) < 10:
+            return jsonify({"error": "Invalid phone number"}), 400
+        if not phone.startswith("+"):
+            phone = f"+{phone_digits}"
+
     if User.query.filter_by(email=data["email"].lower()).first():
-        return jsonify({"error": "Email exists"}), 409
+        return jsonify({"error": "Email already registered"}), 409
 
     user = User(
         email=data["email"].lower(),
@@ -115,11 +130,22 @@ def register_counselor():
         user_id=user.id,
         counselor_id=generate_counselor_id(),
         full_name=data["full_name"],
-        phone=data.get("phone"),
-        specialization=data.get("specialization", "General Counseling"),
+        phone=phone,
+        specialization=(data.get("specialization") or "General Counseling").strip(),
     )
     db.session.add(counselor)
+    audit_log(user.id, "REGISTER", "counselor", {"counselor_id": counselor.counselor_id})
     db.session.commit()
+
     access = create_access_token(identity=str(user.id), additional_claims={"role": user.role.value})
     refresh = create_refresh_token(identity=str(user.id))
-    return jsonify({"access_token": access, "refresh_token": refresh}), 201
+    return jsonify({
+        "access_token": access,
+        "refresh_token": refresh,
+        "user": {"id": user.id, "email": user.email, "role": user.role.value},
+        "counselor": {
+            "counselor_id": counselor.counselor_id,
+            "full_name": counselor.full_name,
+            "specialization": counselor.specialization,
+        },
+    }), 201

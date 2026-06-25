@@ -1,41 +1,70 @@
-# Environment
+# ── Secrets (never commit) ──────────────────────────────────────
 .env
 .env.local
+.env.*.local
 *.pem
+*.key
 
-# Python
+# ── Python ──────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
+.eggs/
 .venv/
 venv/
+env/
 dist/
 build/
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# Node
+# ── Node / frontend build ───────────────────────────────────────
 node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/tsconfig.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# IDE
+# ── IDE & OS ────────────────────────────────────────────────────
 .idea/
 .vscode/
 *.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Data & models
+# ── Data, models & local DB ─────────────────────────────────────
 chroma_data/
 *.db
+*.sqlite
+*.sqlite3
 backend/data/
 models_cache/
 .huggingface/
-
-# Logs & reports
-*.log
-reports/
 uploads/
 
-# OS
-.DS_Store
-Thumbs.db
+# ── Generated reports & logs ────────────────────────────────────
+*.log
+backend/reports/
+reports/
+
+# ── Local screenshots (README uses docs/images/ instead) ────────
+Screenshots/
+Dashboard.jpg
+Login.jpg
+Echo Sense.zip
+
+# ── Hugging Face local clone ────────────────────────────────────
+echosense-ai-hf/
+echo-sense-ai-hf/
+
+# ── Docker / runtime ────────────────────────────────────────────
+.docker/

@@ -79,10 +79,16 @@ export default function Login() {
                 {loading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              New patient?{' '}
-              <Link to="/register" className="text-primary font-medium hover:underline">Create account</Link>
-            </p>
+            <div className="text-center text-sm text-muted-foreground mt-6 space-y-2">
+              <p>
+                New patient?{' '}
+                <Link to="/register" className="text-primary font-medium hover:underline">Create patient account</Link>
+              </p>
+              <p>
+                Counselor?{' '}
+                <Link to="/register/counselor" className="text-primary font-medium hover:underline">Register as counselor</Link>
+              </p>
+            </div>
           </CardContent>
         </Card>
       </motion.div>

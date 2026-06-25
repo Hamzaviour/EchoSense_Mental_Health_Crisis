@@ -1,0 +1,11 @@
+# Hugging Face Space — do not commit build artifacts or dependencies
+**/node_modules/
+**/__pycache__/
+**/.venv/
+backend/reports/
+backend/data/
+.env
+*.zip
+*.jpg
+frontend/dist/
+frontend/tsconfig.tsbuildinfo

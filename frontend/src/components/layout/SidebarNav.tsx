@@ -22,6 +22,8 @@ export default function SidebarNav({ compact }: { compact?: boolean }) {
 
   const patientLinks = [
     { to: '/chat', label: t.nav.chat },
+    { to: '/journal', label: t.nav.journal },
+    { to: '/session-request', label: t.nav.sessionRequest },
     { to: '/therapy-plan', label: t.nav.therapyPlan },
     { to: '/coping-tools', label: t.nav.copingTools },
   ]

@@ -13,6 +13,7 @@ interface AuthCtx {
   loading: boolean
   login: (email: string, password: string) => Promise<unknown>
   register: (form: Record<string, unknown>) => Promise<unknown>
+  registerCounselor: (form: Record<string, unknown>) => Promise<unknown>
   logout: () => void
   setProfile: (p: Record<string, unknown> | null) => void
 }
@@ -57,6 +58,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data
   }
 
+  const registerCounselor = async (form: Record<string, unknown>) => {
+    const { data } = await api.post('/api/auth/register-counselor', form)
+    localStorage.setItem('access_token', data.access_token)
+    localStorage.setItem('refresh_token', data.refresh_token)
+    localStorage.setItem('user', JSON.stringify(data.user))
+    localStorage.setItem('profile', JSON.stringify(data.counselor))
+    setUser(data.user)
+    setProfile(data.counselor)
+    return data
+  }
+
   const logout = () => {
     localStorage.clear()
     setUser(null)
@@ -64,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, register, logout, setProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, login, register, registerCounselor, logout, setProfile }}>
       {children}
     </AuthContext.Provider>
   )

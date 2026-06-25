@@ -1,5 +1,7 @@
 """Socket.IO real-time notifications."""
 
+import os
+
 socketio = None
 
 
@@ -7,7 +9,8 @@ def init_socketio(app):
     global socketio
     from flask_socketio import SocketIO
 
-    socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+    async_mode = os.getenv("SOCKETIO_ASYNC_MODE", "eventlet")
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode=async_mode)
     return socketio
 
 

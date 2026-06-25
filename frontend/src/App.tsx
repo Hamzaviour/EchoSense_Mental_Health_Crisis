@@ -3,9 +3,12 @@ import { useAuth } from '@/context/AuthContext'
 import { homeRouteForRole } from '@/config/navigation'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
+import CounselorRegister from '@/pages/CounselorRegister'
 import PatientChat from '@/pages/PatientChat'
 import TherapyPlan from '@/pages/TherapyPlan'
 import CopingTools from '@/pages/CopingTools'
+import Journal from '@/pages/Journal'
+import SessionRequestPage from '@/pages/SessionRequest'
 import CounselorDashboard from '@/pages/CounselorDashboard'
 import PatientNavigatorView from '@/pages/PatientNavigatorView'
 import DecisionWorkspaceView from '@/pages/DecisionWorkspaceView'
@@ -25,7 +28,10 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/register/counselor" element={<CounselorRegister />} />
       <Route path="/chat" element={<PrivateRoute roles={['PATIENT']}><PatientChat /></PrivateRoute>} />
+      <Route path="/journal" element={<PrivateRoute roles={['PATIENT']}><Journal /></PrivateRoute>} />
+      <Route path="/session-request" element={<PrivateRoute roles={['PATIENT']}><SessionRequestPage /></PrivateRoute>} />
       <Route path="/therapy-plan" element={<PrivateRoute roles={['PATIENT']}><TherapyPlan /></PrivateRoute>} />
       <Route path="/coping-tools" element={<PrivateRoute roles={['PATIENT']}><CopingTools /></PrivateRoute>} />
       <Route path="/counselor/triage" element={<PrivateRoute roles={['COUNSELOR', 'ADMIN']}><CounselorDashboard /></PrivateRoute>} />

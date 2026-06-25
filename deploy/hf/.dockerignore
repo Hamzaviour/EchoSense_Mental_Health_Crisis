@@ -1,0 +1,13 @@
+**/.git
+**/.venv
+**/node_modules
+**/__pycache__
+**/*.pyc
+backend/reports
+backend/data
+.env
+*.zip
+*.jpg
+Echo Sense.zip
+Dashboard.jpg
+Login.jpg

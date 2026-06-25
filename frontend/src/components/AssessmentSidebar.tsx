@@ -22,6 +22,7 @@ export default function AssessmentSidebar() {
     toggleCollapsed,
     saveAnswer,
     saving,
+    startSelfAssessment,
   } = useAssessment()
   const [width, setWidth] = useState(320)
   const [selected, setSelected] = useState('')
@@ -93,8 +94,18 @@ export default function AssessmentSidebar() {
           {session?.is_complete ? (
             <motion.div key="done" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <Card className="border-calm-200 bg-calm-50/50">
-                <CardContent className="p-4 text-sm text-calm-900">
-                  Thank you for sharing. Your responses help us support you better. You can continue chatting anytime.
+                <CardContent className="p-4 text-sm text-calm-900 space-y-3">
+                  <p>
+                    Thank you for sharing. Your responses help us support you better. You can continue chatting anytime.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-1"
+                    onClick={() => startSelfAssessment()}
+                  >
+                    Start another assessment
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>

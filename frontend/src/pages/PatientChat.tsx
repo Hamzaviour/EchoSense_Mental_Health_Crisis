@@ -29,12 +29,12 @@ export default function PatientChat() {
   const [loading, setLoading] = useState(false)
   const [typing, setTyping] = useState(false)
   const [error, setError] = useState('')
-  const [crisisMode, setCrisisMode] = useState(false)
+  const [crisisMode] = useState(false)
   const [counselorActive, setCounselorActive] = useState(false)
   const [patientDbId, setPatientDbId] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { loadActiveSession, sidebarExpanded, session } = useAssessment()
+  const { loadActiveSession, sidebarExpanded, session, completionSummary, startSelfAssessment } = useAssessment()
 
   usePatientSocket(patientDbId, (msg) => {
     setMessages((m) => {
@@ -100,7 +100,6 @@ export default function PatientChat() {
       setCounselorActive(true)
     }
     if (data.crisis_mode) {
-      setCrisisMode(true)
       setLastOffer(null)
     } else if (data.assessment_offer) {
       setLastOffer(data.assessment_offer)
@@ -117,6 +116,15 @@ export default function PatientChat() {
       { role: 'ASSISTANT', content: assistantText, id: data.user_message_id + 1 },
     ])
   }
+
+  // When an assessment completes, append a friendly summary message into chat.
+  const lastSummaryRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (completionSummary?.text && completionSummary.text !== lastSummaryRef.current) {
+      lastSummaryRef.current = completionSummary.text
+      setMessages((m) => [...m, { role: 'ASSISTANT', content: completionSummary.text, id: Date.now() }])
+    }
+  }, [completionSummary?.text])
 
   const sendMessage = async (content: string) => {
     if (!content.trim()) return
@@ -174,13 +182,18 @@ export default function PatientChat() {
               )}
             </div>
             {risk && <RiskBadge level={risk.level} score={risk.score} />}
+            {!crisisMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-3"
+                onClick={() => startSelfAssessment()}
+              >
+                {language === 'ur' ? 'Self-check assessment' : 'Self-check assessment'}
+              </Button>
+            )}
           </div>
-          <MotivationalQuotesTicker crisisMode={crisisMode} />
-          {crisisMode && (
-            <Alert variant="crisis" className="mx-4 mt-3 rounded-lg border-0 shrink-0">
-              {t.chat.crisisAlert}
-            </Alert>
-          )}
+          <MotivationalQuotesTicker crisisMode={false} />
           {counselorActive && (
             <Alert className="mx-4 mt-3 shrink-0 border-emerald-200 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-100">
               A counselor has joined the conversation. You are now speaking with a human counselor.

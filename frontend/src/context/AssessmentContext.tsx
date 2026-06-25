@@ -6,6 +6,7 @@ export interface AssessmentSessionState {
   status: string
   progress_percent?: number
   current_question?: { id: number; number: number; text: string; options: { value: number; label: string }[] }
+  assessment_types?: string[]
   current_type_label?: string
   type_progress?: string
   answered_count?: number
@@ -18,10 +19,12 @@ interface AssessmentCtx {
   sidebarExpanded: boolean
   sidebarCollapsed: boolean
   saving: boolean
+  completionSummary: { text: string; scores?: Record<string, unknown> } | null
   loadActiveSession: () => Promise<void>
   acceptOffer: (sessionId: number) => Promise<void>
   declineOffer: (sessionId: number) => Promise<void>
   saveAnswer: (questionId: number, value: number) => Promise<void>
+  startSelfAssessment: (types?: string[]) => Promise<void>
   setOfferFromChat: (offer: { offered?: boolean; session_id?: number; types?: string[] }) => void
   toggleCollapsed: () => void
   setSidebarExpanded: (v: boolean) => void
@@ -34,6 +37,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [completionSummary, setCompletionSummary] = useState<{ text: string; scores?: Record<string, unknown> } | null>(null)
 
   const loadActiveSession = useCallback(async () => {
     try {
@@ -42,6 +46,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
         setSession(data.session)
         setSidebarExpanded(true)
         setSidebarCollapsed(false)
+        setCompletionSummary(null)
       }
     } catch { /* none */ }
   }, [])
@@ -66,11 +71,24 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
         value,
       })
       setSession(data.session)
+      if (data.summary) {
+        setCompletionSummary(data.summary)
+      }
       if (data.session?.is_complete) setSidebarCollapsed(true)
     } finally {
       setSaving(false)
     }
   }, [session?.session_id])
+
+  const startSelfAssessment = useCallback(async (types?: string[]) => {
+    const { data } = await api.post('/api/assessments/sessions/self-start', { types })
+    if (data.session) {
+      setSession(data.session)
+      setSidebarExpanded(true)
+      setSidebarCollapsed(false)
+      setCompletionSummary(null)
+    }
+  }, [])
 
   const setOfferFromChat = useCallback(() => {}, [])
 
@@ -83,10 +101,12 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
         sidebarExpanded,
         sidebarCollapsed,
         saving,
+        completionSummary,
         loadActiveSession,
         acceptOffer,
         declineOffer,
         saveAnswer,
+        startSelfAssessment,
         setOfferFromChat,
         toggleCollapsed,
         setSidebarExpanded,

@@ -3,6 +3,7 @@ import { Loader2, Search, UserCircle2 } from 'lucide-react'
 import CounselorLayout from '@/components/layout/CounselorLayout'
 import CounselorDecisionPanel from '@/components/counselor/CounselorDecisionPanel'
 import ClinicalReportPanel from '@/components/counselor/ClinicalReportPanel'
+import SessionRequestsPanel from '@/components/counselor/SessionRequestsPanel'
 import RiskBadge from '@/components/RiskBadge'
 import { Alert } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
@@ -127,6 +128,9 @@ export default function DecisionWorkspaceView() {
               ))}
             </div>
           </ScrollArea>
+          <div className="p-3 border-t shrink-0">
+            <SessionRequestsPanel />
+          </div>
         </div>
 
         {/* Right: decision + clinical report */}

@@ -1,5 +1,7 @@
 from flask import current_app
 
+import os
+
 _embedding_fn = None
 
 
@@ -38,6 +40,11 @@ def _embedding_function():
 
 def get_chroma_client():
     import chromadb
+
+    persist_dir = current_app.config.get("CHROMA_PERSIST_DIR") or os.getenv("CHROMA_PERSIST_DIR", "")
+    if persist_dir:
+        os.makedirs(persist_dir, exist_ok=True)
+        return chromadb.PersistentClient(path=persist_dir)
 
     host = current_app.config.get("CHROMA_HOST", "localhost")
     port = current_app.config.get("CHROMA_PORT", 8000)
