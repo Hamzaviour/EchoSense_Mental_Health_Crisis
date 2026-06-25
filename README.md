@@ -247,7 +247,7 @@ python backend/scripts/generate_user_manual_docx.py
 
 ## Authors
 
-- Ch Hamza Younas — L1F23BSAI0089  
+- Ch Hamza Younas
 
 ---
 
